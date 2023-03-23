@@ -1,0 +1,27 @@
+replicaCount: 1
+image:
+  repository: "load-testing/k6"
+  pullPolicy: IfNotPresent
+  tag: "v0.42.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 500m
+    memory: 378Mi
+
+conf:
+  PROMETHEUS_URL: http://prometheus-server.monitoring.svc.cluster.local:80/api/v1/write

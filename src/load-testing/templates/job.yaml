@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k6-load-testing
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      containers:
+      - name: k6-prometheus
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command:
+          [
+            "./k6",
+            "run",
+            "-e",
+            "BASE_URL=$(BASE_URL)",
+            "-e",
+            "K6_PROMETHEUS_RW_SERVER_URL=$(K6_PROMETHEUS_REMOTE_URL)",
+            "-e",
+            "K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true",
+            "-e",
+            "K6_OUT=xk6-prometheus-rw",
+            "./simple_http.js"
+          ]
+        env:
+        - name: K6_PROMETHEUS_REMOTE_URL
+          value: {{ .Values.conf.PROMETHEUS_URL }}
+        envFrom:
+        - configMapRef:
+            name: k6-target
+        - secretRef:
+            name: k6-auth-secret
+      restartPolicy: Never
+  backoffLimit: 4

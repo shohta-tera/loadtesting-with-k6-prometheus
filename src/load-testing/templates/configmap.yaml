@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-target
+  labels: {{- include "k6-prometheus-job.labels" . | nindent 4 }}
+data:
+  TARGET_URL: {{ .Values.conf.BASE_URL }}
